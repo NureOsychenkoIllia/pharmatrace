@@ -98,6 +98,13 @@ let timer = null;
 const $ = (id) => document.getElementById(id);
 const apiGet = (url) => fetch(url, { cache: "no-store" });
 const short = (value) => (value ? value.slice(0, 6) + "…" + value.slice(-4) : "");
+const txLink = (hash) => {
+  if (!/^0x[0-9a-f]{64}$/i.test(hash)) return "—";
+  const url = Number(config.chainId) === 11155111
+    ? `https://sepolia.etherscan.io/tx/${hash}`
+    : `/api/transactions/${hash}`;
+  return `<a href="${url}" target="_blank" rel="noopener noreferrer" title="${hash}">${short(hash)}</a>`;
+};
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const hex = (value) => (value ? "0x" + BigInt(value).toString(16).padStart(64, "0").slice(-64) : "—");
 const city = (value) => {
@@ -153,7 +160,7 @@ async function init() {
       document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.remove("active"));
       tab.classList.add("active");
       $(`tab-${tab.dataset.tab}`).classList.add("active");
-      if (tab.dataset.tab === "audit") refreshAudit();
+      if (tab.dataset.tab === "audit" || tab.dataset.tab === "model") refreshAudit();
     });
   });
 
@@ -510,13 +517,21 @@ async function refreshAudit() {
       apiGet("/api/audit").then((r) => r.json()),
       apiGet("/api/incidents").then((r) => r.json()),
     ]);
+    const decision = audit[0];
+    const chainResult = $("chain-model-result");
+    chainResult.classList.toggle("hidden", !decision);
+    chainResult.innerHTML = decision
+      ? `<h3>Останнє рішення в блокчейні</h3>
+        <p>Партія #${Number(decision.tokenId)} · ${(decision.scoreBps / 100).toFixed(2)} % ·
+        модель ${esc(short(decision.modelVersion))} · транзакція ${txLink(decision.txHash)}</p>`
+      : "";
     $("audit-rows").innerHTML = audit.length
       ? audit.map((row) => `<tr>
           <td>#${row.tokenId}</td>
           <td><b>${(row.scoreBps / 100).toFixed(2)} %</b></td>
           <td>${row.anomalyType === 2 ? "клон" : row.anomalyType === 3 ? "фальсифікат" : "маршрут"}</td>
           <td class="mono">${short(row.modelVersion)}</td>
-          <td class="mono">${short(row.txHash)}</td>
+          <td class="mono">${txLink(row.txHash)}</td>
         </tr>`).join("")
       : '<tr><td colspan="5" class="muted">Рішень ще немає</td></tr>';
     $("incident-rows").innerHTML = incidentList.length

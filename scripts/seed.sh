@@ -28,6 +28,7 @@ PRODUCT3=$(cast keccak "AZITHRO-250")
 META1=$("$PY" -m ml.storage put data/offchain/batch-1001.json)
 META2=$("$PY" -m ml.storage put data/offchain/batch-1002.json)
 META3=$("$PY" -m ml.storage put data/offchain/batch-1003.json)
+"$PY" -m ml.storage import data/offchain/metadata.sqlite data/offchain/batch-{1001,1002,1003}.json
 
 echo "== contracts =="
 echo "registry     $REG"

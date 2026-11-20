@@ -73,14 +73,16 @@ def engineer(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def split_by_batch_time(df: pd.DataFrame, train: float = 0.7, val: float = 0.15):
-    starts = df.groupby("batch_id")["timestamp"].min().sort_values()
-    ids = starts.index.to_numpy()
-    n = len(ids)
-    train_ids = set(ids[: int(n * train)])
-    val_ids = set(ids[int(n * train) : int(n * (train + val))])
-    test_ids = set(ids[int(n * (train + val)) :])
-    masks = [df["batch_id"].isin(s) for s in (train_ids, val_ids, test_ids)]
-    return [df[m].reset_index(drop=True) for m in masks]
+    bounds = df.groupby("batch_id")["timestamp"].agg(start="min", end="max").sort_values("start")
+    val_start = bounds.iloc[int(len(bounds) * train)]["start"]
+    test_start = bounds.iloc[int(len(bounds) * (train + val))]["start"]
+    # A batch crossing a boundary is excluded as a whole so its history stays intact.
+    groups = [
+        bounds["end"] < val_start,
+        (bounds["start"] >= val_start) & (bounds["end"] < test_start),
+        bounds["start"] >= test_start,
+    ]
+    return [df[df["batch_id"].isin(bounds.index[group])].reset_index(drop=True) for group in groups]
 
 
 def build_preprocessor() -> ColumnTransformer:

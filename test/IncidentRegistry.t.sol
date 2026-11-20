@@ -21,6 +21,35 @@ contract IncidentRegistryTest is Fixture {
         uint256 indexed incidentId, uint16 scoreBps, bytes32 modelVersion, bytes32 dataHash
     );
     event IncidentConfirmed(uint256 indexed incidentId, address indexed verifier);
+    event ModelRegistered(bytes32 indexed modelVersion, address indexed oracle);
+
+    function testOracleRegistersModelOnce() public {
+        bytes32 version = sha256("model-v1");
+        assertFalse(incidents.registeredModels(version));
+        vm.expectEmit(true, true, false, true, address(incidents));
+        emit ModelRegistered(version, oracle);
+        vm.prank(oracle);
+        incidents.registerModel(version);
+        assertTrue(incidents.registeredModels(version));
+
+        vm.recordLogs();
+        vm.prank(oracle);
+        incidents.registerModel(version);
+        assertEq(vm.getRecordedLogs().length, 0);
+    }
+
+    function testRegistrationRequiresModelHash() public {
+        vm.prank(oracle);
+        vm.expectRevert(IncidentRegistry.EmptyModelVersion.selector);
+        incidents.registerModel(bytes32(0));
+    }
+
+    function testRegistrationRequiresOracle() public {
+        bytes32 version = sha256("model-v1");
+        vm.prank(outsider);
+        vm.expectRevert();
+        incidents.registerModel(version);
+    }
 
     function _openIncident() internal returns (uint256 id) {
         uint256 batchId = _mintDefault();

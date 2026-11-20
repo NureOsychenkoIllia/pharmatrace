@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -15,9 +16,10 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from web3 import Web3
+from web3.exceptions import TransactionNotFound
 
 from ml.features import engineer
-from ml.storage import digest
+from ml.storage import digest_bytes, load_document
 
 ROOT = Path(__file__).resolve().parent.parent
 DEPLOYMENT = ROOT / "deployments/31337.json"
@@ -198,6 +200,17 @@ class ChainGateway:
     def verify_serial(self, product_id: str, serial: int) -> int:
         return int(self.batch.functions.verifySerial(bytes.fromhex(product_id[2:]), serial).call())
 
+    def transaction(self, tx_hash: str) -> dict[str, Any]:
+        receipt = self.w3.eth.get_transaction_receipt(tx_hash)
+        return {
+            "hash": _hex(receipt["transactionHash"]),
+            "block": receipt["blockNumber"],
+            "status": receipt["status"],
+            "gasUsed": receipt["gasUsed"],
+            "from": receipt["from"],
+            "to": receipt["to"],
+        }
+
     def anomaly_logs(self, limit: int = 50) -> list[dict[str, Any]]:
         event = self.batch.events.AnomalyRecorded()
         logs = event.get_logs(from_block=0, to_block="latest")
@@ -239,8 +252,8 @@ class ChainGateway:
 
 @lru_cache(maxsize=1)
 def get_gateway() -> ChainGateway:
-    deployment = json.loads(DEPLOYMENT.read_text())
-    rpc = __import__("os").environ.get("RPC_URL", "http://127.0.0.1:8545")
+    deployment = json.loads(Path(os.environ.get("DEPLOYMENT_PATH", DEPLOYMENT)).read_text())
+    rpc = os.environ.get("RPC_URL", "http://127.0.0.1:8545")
     return ChainGateway(rpc, deployment)
 
 
@@ -357,8 +370,10 @@ def batch(token_id: int, gateway: ChainGateway = Depends(get_gateway)) -> dict[s
         value = gateway.get_batch(token_id)
     except Exception as exc:
         raise HTTPException(status_code=404, detail=f"batch not found: {exc}") from exc
-    path = ROOT / f"data/offchain/batch-{value['serial']}.json"
-    value["offchain"] = json.loads(path.read_text()) if path.exists() else None
+    doc = load_document(ROOT / "data/offchain", value["serial"])
+    value["offchain"] = (
+        json.loads(doc[1]) if doc and digest_bytes(doc[1]).lower() == value["metadataHash"].lower() else None
+    )
     return value
 
 
@@ -415,17 +430,32 @@ def integrity(token_id: int, gateway: ChainGateway = Depends(get_gateway)) -> di
         value = gateway.get_batch(token_id)
     except Exception as exc:
         raise HTTPException(status_code=404, detail=f"batch not found: {exc}") from exc
-    path = ROOT / f"data/offchain/batch-{value['serial']}.json"
-    if not path.exists():
+    doc = load_document(ROOT / "data/offchain", value["serial"])
+    if doc is None:
         raise HTTPException(status_code=404, detail="off-chain document not found")
-    actual = digest(path)
+    source, payload = doc
+    actual = digest_bytes(payload)
     return {
         "tokenId": token_id,
-        "file": str(path.relative_to(ROOT)),
+        "file": source,
         "sha256": actual,
         "onChain": value["metadataHash"],
         "match": actual.lower() == value["metadataHash"].lower(),
     }
+
+
+@app.get("/api/transactions/{tx_hash}")
+def transaction(tx_hash: str, gateway: ChainGateway = Depends(get_gateway)) -> dict[str, Any]:
+    if len(tx_hash) != 66 or not tx_hash.startswith("0x") or any(
+        digit not in "0123456789abcdefABCDEF" for digit in tx_hash[2:]
+    ):
+        raise HTTPException(status_code=422, detail="invalid transaction hash")
+    try:
+        return gateway.transaction(tx_hash)
+    except TransactionNotFound as exc:
+        raise HTTPException(status_code=404, detail="transaction not found") from exc
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="chain unavailable") from exc
 
 
 app.mount("/app", StaticFiles(directory=ROOT / "web", html=True), name="web")

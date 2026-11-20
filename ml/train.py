@@ -296,6 +296,8 @@ def main() -> None:
             "val_batches": int(val_df.batch_id.nunique()),
             "test_batches": int(test_df.batch_id.nunique()),
             "train_until": str(train_df.timestamp.max()),
+            "val_from": str(val_df.timestamp.min()),
+            "val_until": str(val_df.timestamp.max()),
             "test_from": str(test_df.timestamp.min()),
         },
         "models": metrics,

@@ -1,182 +1,3 @@
-Compiling 3 files with Solc 0.8.28
-Solc 0.8.28 finished in 1.06s
-Compiler run successful with warnings:
-Warning (2018): Function state mutability can be restricted to view
-  --> test/ParticipantRegistry.t.sol:20:5:
-   |
-20 |     function testRegisterParticipant() public {
-   |     ^ (Relevant source part starts here and spans across multiple lines).
-
-Warning (2018): Function state mutability can be restricted to view
-   --> test/ParticipantRegistry.t.sol:167:5:
-    |
-167 |     function testIsActiveChecksKind() public {
-    |     ^ (Relevant source part starts here and spans across multiple lines).
-
-Warning (2018): Function state mutability can be restricted to view
-   --> test/ParticipantRegistry.t.sol:173:5:
-    |
-173 |     function testAccountAtReturnsRegistrationOrder() public {
-    |     ^ (Relevant source part starts here and spans across multiple lines).
-
-
-Ran 5 tests for test/GasBenchmark.t.sol:GasBenchmark
-[PASS] testGasMintPacked() (gas: 253015)
-Logs:
-  mint_packed 249656
-
-[PASS] testGasMintStorageRegistry() (gas: 255071)
-Logs:
-  mint_storage_registry 251735
-
-[PASS] testGasMintUnpacked() (gas: 274821)
-Logs:
-  mint_unpacked 271505
-
-[PASS] testGasRevertCustom() (gas: 29860)
-Logs:
-  revert_custom 26243
-
-[PASS] testGasRevertString() (gas: 29871)
-Logs:
-  revert_string 26298
-
-Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 1.32ms (271.86µs CPU time)
-
-Ran 4 tests for test/IncidentRegistry.t.sol:IntegrationTest
-[PASS] testDispensedBatchCanBeRecalled() (gas: 636822)
-[PASS] testFullTraceabilityScenario() (gas: 1032193)
-[PASS] testSplitAndDistributeChildren() (gas: 1065099)
-[PASS] testSuspendedDistributorCannotAccept() (gas: 425457)
-Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 2.00ms (1.31ms CPU time)
-
-Ran 26 tests for test/ParticipantRegistry.t.sol:ParticipantRegistryTest
-[PASS] testAccountAtReturnsRegistrationOrder() (gas: 24078)
-[PASS] testConstructorRejectsZeroAdmin() (gas: 6079)
-[PASS] testConstructorRejectsZeroVerifier() (gas: 3982)
-[PASS] testIsActiveChecksKind() (gas: 30939)
-[PASS] testPauseBlocksRegistration() (gas: 258719)
-[PASS] testPauseOnlyByPauser() (gas: 34320)
-[PASS] testRegisterEmitsEvent() (gas: 160900)
-[PASS] testRegisterParticipant() (gas: 22636)
-[PASS] testRegisterRevertsOnDuplicate() (gas: 43193)
-[PASS] testRegisterRevertsOnEmptyCity() (gas: 40497)
-[PASS] testRegisterRevertsOnEmptyLicense() (gas: 40076)
-[PASS] testRegisterRevertsOnInvalidKind() (gas: 40438)
-[PASS] testRegisterRevertsOnZeroAddress() (gas: 38139)
-[PASS] testRegisterRevertsWithoutVerifierRole() (gas: 36262)
-[PASS] testReinstateRevertsWhenActive() (gas: 44362)
-[PASS] testReinstateUnknownAccount() (gas: 41803)
-[PASS] testRevokeIsPermanent() (gas: 98303)
-[PASS] testRevokeUnknownAccount() (gas: 42499)
-[PASS] testRevokedCannotBeReinstated() (gas: 81159)
-[PASS] testSuspendAndReinstate() (gas: 115408)
-[PASS] testSuspendRevertsForUnknownAccount() (gas: 41945)
-[PASS] testSuspendSuspendedParticipantReverts() (gas: 80455)
-[PASS] testUpdateLicenseEmitsEvent() (gas: 61099)
-[PASS] testUpdateLicenseRejectsSuspendedParticipant() (gas: 80948)
-[PASS] testUpdateLicenseRevertsOnZeroHash() (gas: 43784)
-[PASS] testVerifierCanBeGrantedByAdmin() (gas: 221319)
-Suite result: ok. 26 passed; 0 failed; 0 skipped; finished in 2.16ms (1.69ms CPU time)
-
-Ran 33 tests for test/IncidentRegistry.t.sol:IncidentRegistryTest
-[PASS] testConfirmAlreadyRecalledBatchSucceeds() (gas: 716829)
-[PASS] testConfirmOnlyByVerifier() (gas: 598671)
-[PASS] testConfirmRecallsBatch() (gas: 691923)
-[PASS] testConfirmRequiresReviewedStatus() (gas: 501609)
-[PASS] testConstructorRejectsZeroAdmin() (gas: 12691)
-[PASS] testConstructorRejectsZeroBatch() (gas: 10462)
-[PASS] testConstructorRejectsZeroRegistry() (gas: 10483)
-[PASS] testConstructorRejectsZeroVerifier() (gas: 10470)
-[PASS] testDecisionCannotBeReplayed() (gas: 607380)
-[PASS] testDecisionOnlyByOracle() (gas: 493740)
-[PASS] testDecisionRejectsScoreAboveMax() (gas: 498240)
-[PASS] testDismissIncident() (gas: 629608)
-[PASS] testDismissRequiresReviewedStatus() (gas: 501598)
-[PASS] testGetIncidentRejectsZeroId() (gas: 10637)
-[PASS] testIncidentNotFound() (gas: 12740)
-[PASS] testIncidentsByBatch() (gas: 711640)
-[PASS] testOracleIncidentOnlyByOracle() (gas: 312049)
-[PASS] testOracleIncidentRejectsHighScore() (gas: 314355)
-[PASS] testOracleIncidentStartsReviewed() (gas: 545338)
-[PASS] testOracleSubmitsDecision() (gas: 594372)
-[PASS] testPauseBlocksReporting() (gas: 371863)
-[PASS] testReportIncident() (gas: 498421)
-[PASS] testReportRejectsEmptyNote() (gas: 315435)
-[PASS] testReportRejectsInvalidKind() (gas: 315772)
-[PASS] testReportRejectsInvalidSeverity() (gas: 315776)
-[PASS] testReportRejectsUnknownBatch() (gas: 46864)
-[PASS] testReportRejectsZeroBatch() (gas: 41614)
-[PASS] testReportRequiresParticipant() (gas: 316081)
-[PASS] testResolveConfirmedIncident() (gas: 690630)
-[PASS] testResolveRequiresConfirmedStatus() (gas: 501609)
-[PASS] testSetOracleMovesRole() (gas: 89860)
-[PASS] testSetOracleRejectsZeroAddress() (gas: 32239)
-[PASS] testSeverityStored() (gas: 485159)
-Suite result: ok. 33 passed; 0 failed; 0 skipped; finished in 2.35ms (4.14ms CPU time)
-
-Ran 59 tests for test/BatchToken.t.sol:BatchTokenTest
-[PASS] testAcceptCustody() (gas: 437277)
-[PASS] testAcceptOnlyByPendingRecipient() (gas: 366723)
-[PASS] testAcceptRevertsInWrongState() (gas: 309714)
-[PASS] testCannotTransferToManufacturer() (gas: 310694)
-[PASS] testCannotTransferToSuspendedParticipant() (gas: 363021)
-[PASS] testConstructorRejectsHighThreshold() (gas: 8575)
-[PASS] testConstructorRejectsZeroAdmin() (gas: 8312)
-[PASS] testConstructorRejectsZeroRegistry() (gas: 6234)
-[PASS] testDestroyOnlyByCustodian() (gas: 355109)
-[PASS] testDestroyRecalledBatch() (gas: 364286)
-[PASS] testDestroyRequiresRecall() (gas: 309861)
-[PASS] testDispenseAtPharmacy() (gas: 598576)
-[PASS] testDispenseOnlyByCustodian() (gas: 551246)
-[PASS] testDispenseRejectsEmptyCommitment() (gas: 558569)
-[PASS] testDispenseRevertsForDistributor() (gas: 437633)
-[PASS] testDispenseRevertsInWrongState() (gas: 310444)
-[PASS] testErc721SafeTransferDisabled() (gas: 308316)
-[PASS] testErc721TransferDisabled() (gas: 308167)
-[PASS] testGetBatchNotFound() (gas: 13616)
-[PASS] testGetBatchRejectsZeroId() (gas: 11534)
-[PASS] testGetBatchesPagination() (gas: 582104)
-[PASS] testInitiateCustody() (gas: 360358)
-[PASS] testInitiateRejectsEmptyCity() (gas: 312623)
-[PASS] testInitiateRejectsRegulator() (gas: 323123)
-[PASS] testInitiateRevertsInTransit() (gas: 366070)
-[PASS] testManufacturerRecallsBatch() (gas: 574525)
-[PASS] testMintEmitsEvent() (gas: 281111)
-[PASS] testMintRevertsForNonManufacturer() (gas: 43048)
-[PASS] testMintRevertsOnDuplicateSerial() (gas: 313607)
-[PASS] testMintRevertsOnExpiredBatch() (gas: 42579)
-[PASS] testMintRevertsOnZeroQuantity() (gas: 42652)
-[PASS] testMintWritesBatch() (gas: 321147)
-[PASS] testOnlyCustodianInitiates() (gas: 310474)
-[PASS] testOracleRecordsFlaggedAnomaly() (gas: 388812)
-[PASS] testOracleScoreBelowThresholdIsNotFlagged() (gas: 385760)
-[PASS] testOutsiderCannotRecall() (gas: 318150)
-[PASS] testOwnerOfUpdatesOnCustodyAccept() (gas: 538441)
-[PASS] testPauseBlocksMint() (gas: 366684)
-[PASS] testPharmacyCannotForwardBatch() (gas: 561766)
-[PASS] testRecallInTransitClearsPendingRecipient() (gas: 404570)
-[PASS] testRecallRejectsDestroyedBatch() (gas: 398093)
-[PASS] testRecordAnomalyOnlyOracle() (gas: 306491)
-[PASS] testRecordAnomalyRejectsScoreAboveMax() (gas: 309015)
-[PASS] testRegulatorRecallsBatch() (gas: 571680)
-[PASS] testRejectCustodyReturnsToSender() (gas: 402317)
-[PASS] testRejectOnlyByPendingRecipient() (gas: 366722)
-[PASS] testRejectRevertsInWrongState() (gas: 309648)
-[PASS] testSetOracleMovesRole() (gas: 502389)
-[PASS] testSetOracleRejectsZeroAddress() (gas: 32189)
-[PASS] testSplitEmitsEvent() (gas: 550890)
-[PASS] testSplitOnlyByCustodian() (gas: 312684)
-[PASS] testSplitReducesParentAndMintsChildren() (gas: 796626)
-[PASS] testSplitRejectsZeroQuantity() (gas: 312683)
-[PASS] testSplitRevertsWhenEmpty() (gas: 312009)
-[PASS] testSplitRevertsWhenInTransit() (gas: 368241)
-[PASS] testSplitRevertsWhenTooLarge() (gas: 315240)
-[PASS] testThresholdRejectsAboveMax() (gas: 32498)
-[PASS] testThresholdUpdateChangesFlag() (gas: 426639)
-[PASS] testVerifySerial() (gas: 296382)
-Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU time)
-
 ╭----------------------------------------+-----------------+--------+--------+--------+---------╮
 | src/BatchToken.sol:BatchToken Contract |                 |        |        |        |         |
 +===============================================================================================+
@@ -188,7 +9,7 @@ Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU
 |----------------------------------------+-----------------+--------+--------+--------+---------|
 | Function Name                          | Min             | Avg    | Median | Max    | # Calls |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
-| INCIDENT_ROLE                          |             283 |    283 |    283 |    283 |     127 |
+| INCIDENT_ROLE                          |             283 |    283 |    283 |    283 |     131 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
 | ORACLE_ROLE                            |             292 |    292 |    292 |    292 |       2 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
@@ -206,13 +27,13 @@ Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU
 |----------------------------------------+-----------------+--------+--------+--------+---------|
 | getBatches                             |            3087 |  18082 |  18015 |  33145 |       3 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
-| grantRole                              |           51513 |  51513 |  51513 |  51513 |     127 |
+| grantRole                              |           51513 |  51513 |  51513 |  51513 |     131 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
 | hasRole                                |            2762 |   2762 |   2762 |   2762 |       2 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
 | initiateCustody                        |           28875 |  48670 |  51856 |  52117 |      37 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
-| mint                                   |           25599 | 252088 | 266894 | 266894 |      82 |
+| mint                                   |           25599 | 244129 | 266894 | 266894 |     142 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
 | oracle                                 |            2459 |   2459 |   2459 |   2459 |       1 |
 |----------------------------------------+-----------------+--------+--------+--------+---------|
@@ -252,15 +73,15 @@ Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU
 +===========================================================================================================+
 | Deployment Cost                                    | Deployment Size |        |        |        |         |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-|                                                  0 |            7547 |        |        |        |         |
+|                                                  0 |            7789 |        |        |        |         |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 |                                                    |                 |        |        |        |         |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 | Function Name                                      | Min             | Avg    | Median | Max    | # Calls |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| ORACLE_ROLE                                        |             291 |    291 |    291 |    291 |       2 |
+| ORACLE_ROLE                                        |             314 |    314 |    314 |    314 |       2 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| confirmIncident                                    |           24051 |  46772 |  52555 |  60445 |       6 |
+| confirmIncident                                    |           24007 |  46728 |  52511 |  60401 |       6 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 | dismissIncident                                    |           30874 |  32969 |  32969 |  35065 |       2 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
@@ -268,25 +89,29 @@ Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 | hasRole                                            |            2737 |   2737 |   2737 |   2737 |       2 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| incidentCount                                      |            2361 |   2361 |   2361 |   2361 |       1 |
+| incidentCount                                      |            2383 |   2383 |   2383 |   2383 |       1 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| incidentsByBatch                                   |            7327 |   7327 |   7327 |   7327 |       1 |
+| incidentsByBatch                                   |            7283 |   7283 |   7283 |   7283 |       1 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 | oracle                                             |            2393 |   2393 |   2393 |   2393 |       1 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 | pause                                              |           29943 |  29943 |  29943 |  29943 |       1 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| reportIncident                                     |           24661 | 133601 | 181842 | 181842 |      22 |
+| registerModel                                      |           24344 |  32346 |  27355 |  50331 |       4 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| reportOracleIncident                               |           26430 | 149155 | 207513 | 241713 |       5 |
+| registeredModels                                   |            2526 |   2526 |   2526 |   2526 |       2 |
+|----------------------------------------------------+-----------------+--------+--------+--------+---------|
+| reportIncident                                     |           24683 | 133623 | 181864 | 181864 |      22 |
+|----------------------------------------------------+-----------------+--------+--------+--------+---------|
+| reportOracleIncident                               |           26430 | 149173 | 207535 | 241735 |       5 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 | resolveIncident                                    |           30831 |  33625 |  35022 |  35022 |       3 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
 | setOracle                                          |           24075 |  41233 |  41233 |  58391 |       2 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| submitModelDecision                                |           25331 |  80796 | 103271 | 103271 |      10 |
+| submitModelDecision                                |           25265 |  80730 | 103205 | 103205 |      10 |
 |----------------------------------------------------+-----------------+--------+--------+--------+---------|
-| unpause                                            |           29945 |  29945 |  29945 |  29945 |       1 |
+| unpause                                            |           29923 |  29923 |  29923 |  29923 |       1 |
 ╰----------------------------------------------------+-----------------+--------+--------+--------+---------╯
 
 ╭----------------------------------------------------------+-----------------+--------+--------+--------+---------╮
@@ -306,7 +131,7 @@ Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | grantRole                                                |           51551 |  51551 |  51551 |  51551 |       1 |
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
-| isActive                                                 |             799 |   2488 |   2968 |   2968 |     135 |
+| isActive                                                 |             799 |   2636 |   2968 |   2968 |     195 |
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | isActiveParticipant                                      |            2624 |   2624 |   2624 |   2624 |      48 |
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
@@ -318,7 +143,7 @@ Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | pause                                                    |           23717 |  35368 |  35368 |  47020 |       2 |
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
-| register                                                 |           25312 | 148407 | 146333 | 163433 |     645 |
+| register                                                 |           25312 | 148447 | 146333 | 163433 |     665 |
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | reinstate                                                |           28680 |  31439 |  31070 |  34938 |       4 |
 |----------------------------------------------------------+-----------------+--------+--------+--------+---------|
@@ -402,4 +227,4 @@ Suite result: ok. 59 passed; 0 failed; 0 skipped; finished in 2.36ms (7.52ms CPU
 ╰-------------------------------------------------------------+-----------------+-------+--------+-------+---------╯
 
 
-Ran 5 test suites in 28.57ms (10.19ms CPU time): 127 tests passed, 0 failed, 0 skipped (127 total tests)
+Ran 6 test suites in 30.78ms (14.56ms CPU time): 131 tests passed, 0 failed, 0 skipped (131 total tests)

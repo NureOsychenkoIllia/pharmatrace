@@ -10,23 +10,29 @@ participant "Модель" as Model
 participant "IncidentRegistry" as Incident
 
 Patient -> UI : сканує QR (продукт + серія)
-UI -> Batch : verifySerial(productId, serial)
-Batch --> UI : tokenId
-UI -> Batch : getBatch(tokenId)
-Batch --> UI : стан, розпорядник, хеш
+UI -> API : GET /api/verify
+API -> Batch : verifySerial(productId, serial)
+Batch --> API : tokenId
+API --> UI : tokenId
+UI -> API : GET /api/batches/{tokenId}
+API -> Batch : getBatch(tokenId)
+Batch --> API : стан, розпорядник, хеш
+API --> UI : стан і перевірені метадані
 UI -> API : GET /api/integrity/{tokenId}
 API -> Batch : getBatch(tokenId)
-API -> Store : SHA-256 документа
-Store --> API : хеш
+API -> Store : читання канонічного JSON із SQLite
+Store --> API : байти документа
+API -> API : SHA-256 і порівняння
 API --> UI : match = true
 
-Note over Oracle : подія сканування в іншому місті
+Note over Oracle : демонстраційний запит на перевірку клону
 Oracle -> Model : ознаки (відстань, швидкість, скани)
 Model --> Oracle : score = 0.9999
+Oracle -> Incident : registerModel(version) для нової версії
 Oracle -> Batch : recordAnomaly(token, 9999, version, dataHash, 2)
 Oracle -> Incident : reportOracleIncident(...)
-Incident --> Oracle : incidentId
+Incident --> Oracle : квитанція з ModelDecisionRecorded
 UI -> API : GET /api/audit
 API -> Batch : журнал AnomalyRecorded
-API --> UI : рішення моделі
+API --> UI : рішення моделі та хеш транзакції
 @enduml

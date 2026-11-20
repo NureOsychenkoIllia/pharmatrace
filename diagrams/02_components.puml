@@ -16,7 +16,7 @@ package "Сервер" {
 }
 
 package "Позалацюгове сховище" {
-  [Канонічний JSON\nSHA-256] as Store
+  [SQLite\nканонічний JSON + SHA-256] as Store
 }
 
 package "Блокчейн" {
@@ -36,9 +36,9 @@ API --> Incident : читання рішень
 API --> Model : predict
 API --> Store : перевірка хешу
 Oracle --> Batch : recordAnomaly
-Oracle --> Incident : reportOracleIncident
+Oracle --> Incident : registerModel, reportOracleIncident
 Oracle --> Model : predict
-Oracle --> DB : ідемпотентність
+Oracle --> DB : вхідні дані й підписані транзакції
 Batch --> Registry : ліцензії
 Incident --> Batch : recallByIncident
 Incident --> Registry : учасники

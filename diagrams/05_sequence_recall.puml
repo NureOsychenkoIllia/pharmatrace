@@ -6,6 +6,7 @@ participant "IncidentRegistry" as Incident
 participant "BatchToken" as Batch
 participant "Оракул" as Oracle
 
+Oracle -> Incident : registerModel(version) для нової версії
 Oracle -> Incident : submitModelDecision(1, 9999, version, dataHash)
 Incident --> Oracle : статус ModelReviewed
 UI -> Incident : getIncident(1)

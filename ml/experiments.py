@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
+import secrets
 import sqlite3
 import time
 from pathlib import Path
@@ -21,6 +23,7 @@ from ml.features import prepare
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "results"
 API = "http://127.0.0.1:8000"
+REPEATS = 5
 SEED = 42
 RNG = np.random.default_rng(SEED)
 
@@ -137,7 +140,8 @@ async def api_latency() -> dict:
         batch_times, analyze_times = [], []
         for _ in range(50):
             start = time.perf_counter()
-            await client.get(f"{API}/api/batches")
+            response = await client.get(f"{API}/api/batches")
+            response.raise_for_status()
             batch_times.append((time.perf_counter() - start) * 1000)
         for _ in range(50):
             start = time.perf_counter()
@@ -178,6 +182,7 @@ async def load_level(level: int, payload: dict) -> dict:
         "p50_ms": percentile(times, 50),
         "p95_ms": percentile(times, 95),
         "max_ms": max(times),
+        "raw_ms": times,
     }
 
 
@@ -193,7 +198,7 @@ async def load_test() -> list[dict]:
     results = []
     for level in (10, 50, 100):
         runs = []
-        for _ in range(3):
+        for _ in range(REPEATS):
             runs.append(await load_level(level, payload))
         results.append(
             {
@@ -220,6 +225,7 @@ def model_latency(data) -> dict:
         "p50_ms": percentile(times, 50),
         "p95_ms": percentile(times, 95),
         "mean_ms": float(np.mean(times)),
+        "raw_ms": times,
         "rows": len(times),
     }
 
@@ -353,7 +359,8 @@ def centralized(rounds: int = 100) -> dict:
 
 def chain_scenario() -> dict:
     deployment = json.loads((ROOT / "deployments/31337.json").read_text())
-    w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545", request_kwargs={"timeout": 10}))
+    rpc = os.environ.get("RPC_URL", "http://127.0.0.1:8545")
+    w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={"timeout": 10}))
     batch = w3.eth.contract(address=Web3.to_checksum_address(deployment["batch"]), abi=BATCH_ABI)
     incidents = w3.eth.contract(
         address=Web3.to_checksum_address(deployment["incidents"]), abi=INCIDENT_ABI
@@ -372,13 +379,16 @@ def chain_scenario() -> dict:
         start = time.perf_counter()
         tx_hash = w3.eth.send_transaction(tx)
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=30)
+        if receipt.status != 1:
+            raise RuntimeError(f"scenario transaction reverted: {tx_hash.hex()}")
         return {
             "seconds": time.perf_counter() - start,
             "gas": int(receipt.gasUsed),
             "status": int(receipt.status),
+            "txHash": tx_hash.hex(),
         }
 
-    serial = int(time.time()) % 1_000_000 + 500_000
+    serial = secrets.randbits(63)
     product = Web3.keccak(text=f"EXPERIMENT-{serial}")
     token_id = int(batch.functions.batchCount().call()) + 1
     incident_id = int(incidents.functions.incidentCount().call()) + 1
@@ -417,6 +427,15 @@ def chain_scenario() -> dict:
 async def main() -> None:
     RESULTS.mkdir(exist_ok=True)
     data = prepare(ROOT)
+    scenario_runs = [chain_scenario() for _ in range(REPEATS)]
+    steps = [
+        {
+            "step": first["step"],
+            "seconds": float(np.median([run["steps"][index]["seconds"] for run in scenario_runs])),
+            "gas": int(np.median([run["steps"][index]["gas"] for run in scenario_runs])),
+        }
+        for index, first in enumerate(scenario_runs[0]["steps"])
+    ]
     payload = {
         "latency": await api_latency(),
         "load": await load_test(),
@@ -425,7 +444,12 @@ async def main() -> None:
         "learning_curve": learning_curve(data),
         "mcnemar": mcnemar(data),
         "centralized": centralized(),
-        "chain_scenario": chain_scenario(),
+        "chain_scenario": {
+            "steps": steps,
+            "total_seconds": float(np.median([run["total_seconds"] for run in scenario_runs])),
+            "total_gas": int(np.median([run["total_gas"] for run in scenario_runs])),
+            "runs": scenario_runs,
+        },
     }
     (RESULTS / "experiments.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False))
     print(json.dumps({k: v for k, v in payload.items() if k not in {"latency"}}, indent=2)[:4000])

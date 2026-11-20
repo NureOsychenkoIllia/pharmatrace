@@ -105,22 +105,47 @@ def main() -> None:
     save(fig, "exp_learning.png")
 
     centralized = data["centralized"]
-    onchain_ms = np.mean([step["seconds"] for step in steps]) * 1000
+    scenario_runs = data["chain_scenario"].get("runs", [data["chain_scenario"]])
+    onchain_ms = [run["total_seconds"] * 1000 for run in scenario_runs]
     fig, ax = plt.subplots(figsize=(5, 3))
-    labels = ["SQLite", "Блокчейн (на транзакцію)"]
-    p50 = [centralized["p50_ms"], onchain_ms]
-    p95 = [centralized["p95_ms"], onchain_ms * 1.05]
+    labels = ["SQLite", "Блокчейн"]
+    p50 = [centralized["p50_ms"], np.percentile(onchain_ms, 50)]
+    p95 = [centralized["p95_ms"], np.percentile(onchain_ms, 95)] if len(onchain_ms) > 1 else [centralized["p95_ms"], np.nan]
     x = np.arange(2)
     ax.bar(x - 0.18, p50, 0.36, label="p50", color=COLORS[0])
     ax.bar(x + 0.18, p95, 0.36, label="p95", color=COLORS[3])
     ax.set_xticks(x, labels)
     ax.set_yscale("log")
-    ax.set_ylabel("мс (лог. шкала)")
+    ax.set_ylabel("час сценарію, мс (лог. шкала)")
     ax.legend()
     ax.set_title("Централізоване рішення проти блокчейну")
     save(fig, "exp_centralized.png")
 
     scenario_gas = data["chain_scenario"]["total_gas"]
+    fig, ax = plt.subplots(figsize=(5, 3))
+    for label, series, color in zip(
+        labels, [centralized.get("raw_ms", []), onchain_ms], COLORS
+    ):
+        if series:
+            ordered = np.sort(series)
+            ax.step(ordered, np.arange(1, len(ordered) + 1) / len(ordered), where="post", label=label, color=color)
+    ax.set_xscale("log")
+    ax.set_xlabel("час повного сценарію, мс (лог. шкала)")
+    ax.set_ylabel("частка завершених прогонів")
+    ax.legend()
+    save(fig, "exp_centralized_distribution.png")
+
+    if len(scenario_runs) > 1:
+        fig, ax = plt.subplots(figsize=(6.4, 3.4))
+        ax.boxplot([
+            [run["steps"][i]["seconds"] * 1000 for run in scenario_runs]
+            for i in range(len(names))
+        ])
+        ax.set_xticks(range(1, len(names) + 1), names, rotation=30, ha="right")
+        ax.set_ylabel("час підтвердження, мс")
+        ax.set_title("Розподіл затримок підтвердження в Anvil")
+        save(fig, "exp_confirmation.png")
+
     monthly_ops = 1000 * 30
     avg_gas = scenario_gas / len(steps)
     monthly_gas = avg_gas * monthly_ops
@@ -155,4 +180,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    FIG.mkdir(parents=True, exist_ok=True)
     main()

@@ -68,6 +68,8 @@ contract IncidentRegistry is AccessControl, Pausable {
     uint256 public incidentCount;
     mapping(uint256 => Incident) private _incidents;
     mapping(uint256 => uint256[]) private _byBatch;
+    /// @notice Whether an oracle registered the hash of a model artifact.
+    mapping(bytes32 => bool) public registeredModels;
 
     event IncidentReported(
         uint256 indexed incidentId,
@@ -83,6 +85,7 @@ contract IncidentRegistry is AccessControl, Pausable {
     event IncidentDismissed(uint256 indexed incidentId, address indexed verifier);
     event IncidentResolved(uint256 indexed incidentId, address indexed verifier);
     event OracleUpdated(address indexed oldOracle, address indexed newOracle);
+    event ModelRegistered(bytes32 indexed modelVersion, address indexed oracle);
 
     error ZeroAddress();
     error InvalidKind();
@@ -93,6 +96,7 @@ contract IncidentRegistry is AccessControl, Pausable {
     error InvalidTransition(uint256 incidentId, Status status);
     error InvalidScore(uint16 scoreBps);
     error BatchNotFound(uint256 batchId);
+    error EmptyModelVersion();
 
     /// @param admin Receives admin and pauser roles
     /// @param verifier Receives the verifier role
@@ -116,6 +120,15 @@ contract IncidentRegistry is AccessControl, Pausable {
         REGISTRY = registry;
         BATCH = batch;
         if (initialOracle != address(0)) _setOracle(initialOracle);
+    }
+
+    /// @notice Registers a model artifact hash for the audit trail.
+    /// @param modelVersion SHA-256 of the model artifact.
+    function registerModel(bytes32 modelVersion) external onlyRole(ORACLE_ROLE) whenNotPaused {
+        if (modelVersion == bytes32(0)) revert EmptyModelVersion();
+        if (registeredModels[modelVersion]) return;
+        registeredModels[modelVersion] = true;
+        emit ModelRegistered(modelVersion, msg.sender);
     }
 
     /// @notice Reports an incident without a model decision yet

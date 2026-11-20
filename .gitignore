@@ -14,3 +14,4 @@ reports/*.info
 results/oracle.log
 results/oracle_state.db
 data/offchain/*-tampered.json
+/data/offchain/metadata.sqlite*
