@@ -1,0 +1,24 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+start
+:журнал подій (CSV, 25 000 передач);
+:перевірка схеми та типів;
+:ознаки: відстань, швидкість, час,
+кількість, температура, скани;
+:розбиття за партіями і часом
+70 / 15 / 15;
+fork
+  :правила допустимих переходів;
+fork again
+  :Isolation Forest;
+fork again
+  :автокодер (MLP);
+fork again
+  :XGBoost;
+end fork
+:поріг на валідації;
+:тест: precision, recall, F1, PR-AUC;
+:версія = SHA-256 файлу моделі;
+:реєстрація версії в контракті;
+stop
+@enduml

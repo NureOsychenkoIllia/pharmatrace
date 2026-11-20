@@ -1,0 +1,13 @@
+{
+  "batch": 1001,
+  "product": "Amoxicillin 500 mg, 20 capsules",
+  "gtin": "04812345678901",
+  "serial": 1001,
+  "manufacturer_license": "UA-MFG-0042",
+  "origin_city": "KY",
+  "manufactured_at": "2026-10-01T08:00:00Z",
+  "expiry": "2027-10-01",
+  "quantity": 1000,
+  "storage": "15-25 C, dry",
+  "document": "batch release protocol"
+}

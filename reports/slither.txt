@@ -1,0 +1,31 @@
+'forge clean' running (wd: /home/xelenium/Documents/uni/4/ТБЧ/project)
+'forge config --json' running
+'forge build --build-info --deny never --skip ./test/** ./script/** --force' running (wd: /home/xelenium/Documents/uni/4/ТБЧ/project)
+INFO:Detectors:
+Detector: incorrect-equality
+ParticipantRegistry.isActiveParticipant(address) (src/ParticipantRegistry.sol#167-169) uses a dangerous strict equality:
+	- _participants[account].status == Status.Active (src/ParticipantRegistry.sol#168)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+INFO:Detectors:
+Detector: timestamp
+BatchToken.mint(bytes32,uint64,uint64,uint128,bytes32,bytes2) (src/BatchToken.sol#159-196) uses timestamp for comparisons
+	Dangerous comparisons:
+	- expiry <= block.timestamp (src/BatchToken.sol#171)
+ParticipantRegistry.isActiveParticipant(address) (src/ParticipantRegistry.sol#167-169) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _participants[account].status == Status.Active (src/ParticipantRegistry.sol#168)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+INFO:Detectors:
+Detector: costly-loop
+BatchToken.split(uint256,uint128[]) (src/BatchToken.sol#257-304) has costly operations inside a loop:
+	- childId = ++ batchCount (src/BatchToken.sol#279)
+BatchToken.split(uint256,uint128[]) (src/BatchToken.sol#257-304) has costly operations inside a loop:
+	- childSerial = ++ splitSerialCounter + SPLIT_SERIAL_BASE (src/BatchToken.sol#280)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#costly-operations-inside-a-loop
+INFO:Detectors:
+Detector: naming-convention
+Variable BatchToken.REGISTRY (src/BatchToken.sol#73) is not in mixedCase
+Variable IncidentRegistry.REGISTRY (src/IncidentRegistry.sol#64) is not in mixedCase
+Variable IncidentRegistry.BATCH (src/IncidentRegistry.sol#65) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+INFO:Slither:. analyzed (24 contracts with 102 detectors), 8 result(s) found

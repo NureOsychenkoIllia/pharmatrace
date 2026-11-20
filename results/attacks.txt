@@ -1,0 +1,12 @@
+== attack 1: distributor mints a batch without a manufacturer license ==
+RESULT: rejected: NotManufacturer(0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC)
+== attack 2: manufacturer writes a model decision without the oracle role ==
+RESULT: rejected: AccessControlUnauthorizedAccount(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, 0x68e79a7bf1e0bc45d0a330c573bc367f9cf464fd326078812f301165fbda4ef1)
+== attack 3: replay a model decision for a closed incident ==
+RESULT: rejected: InvalidTransition(1, 5)
+== attack 4: substitute the off-chain batch document ==
+RESULT: MISMATCH
+== attack 5: split into 51 parts to exhaust the loop bound ==
+RESULT: rejected: InvalidSplit
+== anomalous input reaches the model ==
+RESULT: score 0.9999, anomaly=True

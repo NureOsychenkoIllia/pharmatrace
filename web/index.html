@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PharmaTrace · простежуваність ліків</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">✚</span>
+      <div>
+        <h1>PharmaTrace</h1>
+        <p class="muted">Простежуваність партій ліків · блокчейн і модель</p>
+      </div>
+    </div>
+    <div class="wallet">
+      <span id="network" class="badge badge-muted">мережа…</span>
+      <select id="account-select" class="select hidden" aria-label="Обліковий запис"></select>
+      <button id="connect" class="btn btn-primary">Підключити гаманець</button>
+      <span id="account" class="account hidden"></span>
+      <span id="role" class="badge badge-muted hidden">роль…</span>
+    </div>
+  </header>
+
+  <div id="banner" class="banner hidden"></div>
+
+  <main>
+    <section class="stats">
+      <div class="stat"><span id="stat-batches">—</span><label>партій</label></div>
+      <div class="stat"><span id="stat-flagged">—</span><label>з аномалією</label></div>
+      <div class="stat"><span id="stat-incidents">—</span><label>інцидентів</label></div>
+      <div class="stat"><span id="stat-model">—</span><label>версія моделі</label></div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="batches">Партії</button>
+      <button class="tab" data-tab="verify">Перевірка упаковки</button>
+      <button class="tab" data-tab="model">Рішення моделі</button>
+      <button class="tab" data-tab="audit">Аудит та інциденти</button>
+    </nav>
+
+    <section id="tab-batches" class="tab-panel active">
+      <div class="panel-head">
+        <h2>Партії в ланцюгу</h2>
+        <span class="muted" id="batches-note">підключіть гаманець</span>
+        <button id="refresh" class="btn btn-ghost">Оновити</button>
+      </div>
+      <div id="batches" class="cards">
+        <div class="empty">Підключіть гаманець, щоб побачити партії…</div>
+      </div>
+    </section>
+
+    <section id="tab-verify" class="tab-panel">
+      <div class="panel">
+        <div class="panel-head"><h2>Пацієнт перевіряє QR-код</h2></div>
+        <p class="muted">QR містить код продукту та серійний номер. Контракт повертає партію і стан останньої передачі.</p>
+        <form id="verify-form" class="grid-form">
+          <label>Код продукту<input id="verify-product" value="AMOX-500" required></label>
+          <label>Серійний номер<input id="verify-serial" type="number" value="1001" required></label>
+          <button class="btn btn-primary" type="submit">Перевірити</button>
+        </form>
+        <div id="verify-result" class="result hidden"></div>
+      </div>
+    </section>
+
+    <section id="tab-model" class="tab-panel">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Рішення моделі</h2>
+          <span class="badge badge-muted">XGBoost · v1</span>
+        </div>
+        <p class="muted">Оракул отримує подію сканування, будує ознаки та надсилає оцінку в контракт разом із версією моделі й хешем даних.</p>
+        <form id="model-form" class="grid-form">
+          <label>Відстань, км<input id="f-distance" type="number" value="1400" step="any"></label>
+          <label>Час у дорозі, год<input id="f-transit" type="number" value="1.2" step="any"></label>
+          <label>Сканів за 24 год<input id="f-scans" type="number" value="14"></label>
+          <label>Міст із тим самим серійним<input id="f-cities" type="number" value="4"></label>
+          <label>Місто сканування
+            <select id="f-scan-city">
+              <option value="Kyiv">Київ</option>
+              <option value="Lviv" selected>Львів</option>
+            </select>
+          </label>
+          <label>Статус ліцензії
+            <select id="f-license">
+              <option value="active">активна</option>
+              <option value="suspended">призупинена</option>
+            </select>
+          </label>
+          <button class="btn btn-primary" type="submit">Проаналізувати</button>
+        </form>
+        <div id="model-result" class="result hidden"></div>
+      </div>
+    </section>
+
+    <section id="tab-audit" class="tab-panel">
+      <div class="panel">
+        <div class="panel-head"><h2>Історія рішень із ланцюга</h2><button id="audit-refresh" class="btn btn-ghost">Оновити</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Партія</th><th>Оцінка</th><th>Тип</th><th>Версія моделі</th><th>Транзакція</th></tr></thead>
+            <tbody id="audit-rows"><tr><td colspan="5" class="muted">завантаження…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Інциденти</h2><span class="muted">рішення регулятора</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Партія</th><th>Тип</th><th>Ступінь</th><th>Стан</th><th>Оцінка</th><th>Дії</th></tr></thead>
+            <tbody id="incident-rows"><tr><td colspan="7" class="muted">завантаження…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="panel-head"><h2 id="modal-title">Деталі</h2><button id="modal-close" class="btn btn-ghost">Закрити</button></div>
+      <pre id="modal-body"></pre>
+    </div>
+  </div>
+  <div id="toasts" class="toasts"></div>
+
+  <script src="vendor/ethers.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

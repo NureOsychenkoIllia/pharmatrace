@@ -1,0 +1,45 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+skinparam actorStyle awesome
+left to right direction
+
+actor "Пацієнт" as Patient
+actor "Виробник" as Manufacturer
+actor "Дистриб'ютор" as Distributor
+actor "Аптека" as Pharmacy
+actor "Регулятор" as Regulator
+actor "Оракул (ML)" as Oracle
+actor "Адміністратор" as Admin
+
+rectangle "PharmaTrace" {
+  usecase "Перевірити упаковку за QR" as UC1
+  usecase "Випустити партію" as UC2
+  usecase "Передати відповідальність" as UC3
+  usecase "Прийняти або відхилити партію" as UC4
+  usecase "Поділити партію" as UC5
+  usecase "Відпустити ліки" as UC6
+  usecase "Подати інцидент" as UC7
+  usecase "Підтвердити рішення моделі" as UC8
+  usecase "Відкликати партію" as UC9
+  usecase "Переглянути аудит рішень" as UC10
+  usecase "Замінити адресу оракула" as UC11
+  usecase "Аварійно зупинити систему" as UC12
+}
+
+Patient --> UC1
+Manufacturer --> UC2
+Manufacturer --> UC9
+Distributor --> UC3
+Distributor --> UC4
+Distributor --> UC5
+Pharmacy --> UC3
+Pharmacy --> UC4
+Pharmacy --> UC6
+Pharmacy --> UC7
+Regulator --> UC8
+Regulator --> UC9
+Regulator --> UC10
+Oracle --> UC8
+Admin --> UC11
+Admin --> UC12
+@enduml

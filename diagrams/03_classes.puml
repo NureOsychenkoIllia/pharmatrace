@@ -1,0 +1,100 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+skinparam classAttributeIconSize 0
+hide empty members
+
+enum Kind {
+  Manufacturer
+  Distributor
+  Pharmacy
+  Regulator
+}
+enum Status {
+  Active
+  Suspended
+  Revoked
+}
+enum BatchState {
+  Created
+  InTransit
+  Delivered
+  Dispensed
+  Recalled
+  Destroyed
+}
+enum IncidentStatus {
+  Open
+  ModelReviewed
+  Confirmed
+  Dismissed
+  Resolved
+}
+
+class ParticipantRegistry {
+  - mapping _participants
+  + register(account, kind, licenseHash, city)
+  + updateLicense(account, hash)
+  + suspend(account)
+  + reinstate(account)
+  + revoke(account, reasonHash)
+  + isActive(account, kind) bool
+  + kindOf(account) Kind
+  + participantOf(account) tuple
+  + pause() / unpause()
+  --
+  event ParticipantRegistered
+  event LicenseUpdated
+  error NotRegistered
+  error WrongStatus
+}
+
+class BatchToken {
+  - mapping _batches
+  - mapping _serialIndex
+  + mint(productId, serial, expiry, quantity, metadataHash, city) uint256
+  + initiateCustody(tokenId, to, city)
+  + acceptCustody(tokenId)
+  + rejectCustody(tokenId)
+  + split(tokenId, quantities)
+  + dispense(tokenId, commitment)
+  + recall(tokenId, reasonHash)
+  + destroy(tokenId)
+  + recordAnomaly(tokenId, scoreBps, modelVersion, dataHash, type)
+  + verifySerial(productId, serial) uint256
+  + setOracle(address)
+  --
+  event BatchMinted
+  event CustodyInitiated / CustodyAccepted
+  event BatchSplit
+  event BatchRecalled
+  event AnomalyRecorded
+  error InvalidState
+  error NotCustodian
+  error DuplicateSerial
+}
+
+class IncidentRegistry {
+  - mapping _incidents
+  - mapping _byBatch
+  + reportIncident(batchId, kind, severity, noteHash)
+  + reportOracleIncident(batchId, kind, severity, score, version, dataHash, note)
+  + submitModelDecision(incidentId, score, version, dataHash)
+  + confirmIncident(incidentId)
+  + dismissIncident(incidentId)
+  + resolveIncident(incidentId)
+  + setOracle(address)
+  --
+  event IncidentReported
+  event ModelDecisionRecorded
+  event IncidentConfirmed
+  error InvalidTransition
+  error NotParticipant
+}
+
+ParticipantRegistry "1" <-- "*" BatchToken : isActive / kindOf
+BatchToken "1" <-- "*" IncidentRegistry : recallByIncident
+IncidentRegistry ..> Kind
+IncidentRegistry ..> IncidentStatus
+BatchToken ..> BatchState
+ParticipantRegistry ..> Status
+@enduml

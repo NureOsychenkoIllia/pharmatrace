@@ -1,0 +1,22 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+participant "Регулятор" as Reg
+participant "Вебінтерфейс" as UI
+participant "IncidentRegistry" as Incident
+participant "BatchToken" as Batch
+participant "Оракул" as Oracle
+
+Oracle -> Incident : submitModelDecision(1, 9999, version, dataHash)
+Incident --> Oracle : статус ModelReviewed
+UI -> Incident : getIncident(1)
+Incident --> UI : score 9999, Critical, ModelReviewed
+Reg -> UI : натискає «Підтвердити»
+UI -> Incident : confirmIncident(1)
+Incident -> Incident : статус Confirmed
+Incident -> Batch : recallByIncident(batchId, noteHash)
+Batch -> Batch : стан Recalled
+Batch --> Incident : ok
+Incident --> UI : подія IncidentConfirmed
+UI -> Incident : resolveIncident(1)
+Incident --> UI : статус Resolved
+@enduml

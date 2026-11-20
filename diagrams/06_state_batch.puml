@@ -1,0 +1,18 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+[*] --> Created : mint()
+Created --> InTransit : initiateCustody()
+InTransit --> Delivered : acceptCustody()
+InTransit --> Delivered : rejectCustody()
+Delivered --> InTransit : initiateCustody()
+Delivered --> Dispensed : dispense()
+Created --> Recalled : recall()
+InTransit --> Recalled : recall()
+Delivered --> Recalled : recall()
+Dispensed --> Recalled : recall()
+Recalled --> Destroyed : destroy()
+Created --> Created : split()
+Delivered --> Delivered : split()
+Destroyed --> [*]
+Dispensed --> [*] : продано пацієнту
+@enduml

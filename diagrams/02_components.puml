@@ -1,0 +1,45 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+skinparam componentStyle rectangle
+
+package "Клієнт" {
+  [Вебінтерфейс\nвиробник / дистриб'ютор / аптека] as UI1
+  [Вебінтерфейс\nрегулятор / аудит] as UI2
+  [Гаманець\nMetaMask або anvil] as Wallet
+}
+
+package "Сервер" {
+  [FastAPI\n/api/batches, /api/analyze,\n/api/audit, /api/integrity] as API
+  [Оракул\nподії → ознаки → модель] as Oracle
+  [XGBoost + препроцесор\njoblib] as Model
+  [SQLite\nжурнал оракула] as DB
+}
+
+package "Позалацюгове сховище" {
+  [Канонічний JSON\nSHA-256] as Store
+}
+
+package "Блокчейн" {
+  [ParticipantRegistry] as Registry
+  [BatchToken\nERC-721 + FSM] as Batch
+  [IncidentRegistry] as Incident
+}
+
+UI1 --> API : REST
+UI2 --> API : REST
+UI1 --> Wallet
+UI2 --> Wallet
+Wallet --> Batch : підписані транзакції
+Wallet --> Incident : підписані транзакції
+API --> Batch : читання стану
+API --> Incident : читання рішень
+API --> Model : predict
+API --> Store : перевірка хешу
+Oracle --> Batch : recordAnomaly
+Oracle --> Incident : reportOracleIncident
+Oracle --> Model : predict
+Oracle --> DB : ідемпотентність
+Batch --> Registry : ліцензії
+Incident --> Batch : recallByIncident
+Incident --> Registry : учасники
+@enduml

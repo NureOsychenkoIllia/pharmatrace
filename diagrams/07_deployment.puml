@@ -1,0 +1,33 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+skinparam nodeStyle rectangle
+
+node "Браузер" {
+  [Вебінтерфейс\nlocalhost:8000/app]
+}
+node "Сервер застосунку" {
+  [FastAPI :8000]
+  [Оракул]
+  [Модель joblib]
+  database "SQLite" as DB
+}
+node "Позалацюгове сховище" {
+  folder "data/offchain" as Files
+}
+node "Локальна мережа anvil :8545" {
+  [ParticipantRegistry]
+  [BatchToken]
+  [IncidentRegistry]
+}
+cloud "Sepolia (не використано)" as Sepolia
+
+[Вебінтерфейс\nlocalhost:8000/app] --> [FastAPI :8000] : HTTP/JSON
+[FastAPI :8000] --> [BatchToken] : JSON-RPC
+[FastAPI :8000] --> [IncidentRegistry] : JSON-RPC
+[Оракул] --> [BatchToken] : підписані транзакції
+[Оракул] --> [IncidentRegistry] : підписані транзакції
+[Оракул] --> [Модель joblib]
+[Оракул] --> DB
+[FastAPI :8000] --> Files
+[BatchToken] ..> Sepolia : той самий байткод
+@enduml

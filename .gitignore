@@ -1,0 +1,16 @@
+out/
+cache/
+broadcast/
+lib/
+.env
+.env.*
+!.env.example
+.venv/
+.pytest_cache/
+/artifacts/isolation_forest.joblib
+__pycache__/
+*.pyc
+reports/*.info
+results/oracle.log
+results/oracle_state.db
+data/offchain/*-tampered.json

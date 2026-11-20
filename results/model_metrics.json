@@ -1,0 +1,171 @@
+{
+  "dataset": {
+    "rows": 25000,
+    "train_rows": 17443,
+    "val_rows": 3762,
+    "test_rows": 3795,
+    "anomaly_rate": 0.36,
+    "seed": 42
+  },
+  "split": {
+    "train_batches": 1663,
+    "val_batches": 356,
+    "test_batches": 357,
+    "train_until": "2026-05-01 20:23:54.792297783+00:00",
+    "test_from": "2026-05-24 03:31:17.066804877+00:00"
+  },
+  "models": {
+    "baseline_rules": {
+      "threshold": 0.5,
+      "precision": 0.9521531100478469,
+      "recall": 0.28819695872556117,
+      "f1": 0.4424680377987771,
+      "accuracy": 0.7357048748353097,
+      "roc_auc": 0.6399559772915295,
+      "pr_auc": 0.5334326634949504,
+      "alert_rate": 0.11014492753623188,
+      "confusion": [
+        [
+          2394,
+          20
+        ],
+        [
+          983,
+          398
+        ]
+      ],
+      "train_seconds": 0.0,
+      "inference_ms_per_row": 0.0,
+      "size_bytes": 0,
+      "hash": "",
+      "family": "rules",
+      "f1_ci": [
+        0.4139120382005529,
+        0.47269311695027644
+      ]
+    },
+    "isolation_forest": {
+      "threshold": 0.4581111441111755,
+      "precision": 0.8526645768025078,
+      "recall": 0.7878349022447502,
+      "f1": 0.818968761761385,
+      "accuracy": 0.8732542819499342,
+      "roc_auc": 0.9337241663552042,
+      "pr_auc": 0.9110530613286739,
+      "alert_rate": 0.336231884057971,
+      "confusion": [
+        [
+          2226,
+          188
+        ],
+        [
+          293,
+          1088
+        ]
+      ],
+      "train_seconds": 0.47494906000065384,
+      "inference_ms_per_row": 0.021602606851937635,
+      "size_bytes": 147404473,
+      "hash": "0x81d71f498d409481ea7f5cc38b799d9949f85babf3c384304670fd216cb3312d",
+      "family": "bagging",
+      "f1_ci": [
+        0.803462233929926,
+        0.83383797622147
+      ]
+    },
+    "autoencoder": {
+      "threshold": 0.16616739032452185,
+      "precision": 0.5082578582844965,
+      "recall": 0.6908037653874004,
+      "f1": 0.585635359116022,
+      "accuracy": 0.6442687747035574,
+      "roc_auc": 0.7150885463567279,
+      "pr_auc": 0.6137479955171053,
+      "alert_rate": 0.4945981554677207,
+      "confusion": [
+        [
+          1491,
+          923
+        ],
+        [
+          427,
+          954
+        ]
+      ],
+      "train_seconds": 3.296158066998032,
+      "inference_ms_per_row": 0.00013279446679239843,
+      "size_bytes": 48055,
+      "hash": "0x28c8059cfb3bb28b23d12ce3e817de1f46bf389a25edc283a48a272b54c91e98",
+      "family": "neural_network",
+      "f1_ci": [
+        0.5652071819444066,
+        0.6054877041374017
+      ]
+    },
+    "xgboost": {
+      "threshold": 0.5583791509872651,
+      "precision": 0.9978213507625272,
+      "recall": 0.9949312092686459,
+      "f1": 0.9963741841914431,
+      "accuracy": 0.997364953886693,
+      "roc_auc": 0.998073031621599,
+      "pr_auc": 0.9978476031103196,
+      "alert_rate": 0.36284584980237156,
+      "confusion": [
+        [
+          2411,
+          3
+        ],
+        [
+          7,
+          1374
+        ]
+      ],
+      "train_seconds": 0.0874566570018942,
+      "inference_ms_per_row": 0.00031615494092747235,
+      "size_bytes": 208911,
+      "hash": "0x4989a2f1575f35f34d4c9fa3f4c3fc6faaf2a3112f87e5bcddfc83907bca2e7f",
+      "family": "boosting",
+      "f1_ci": [
+        0.9938554928877219,
+        0.99824521279289
+      ]
+    }
+  },
+  "best_model": "xgboost",
+  "feature_names": [
+    "num__distance_km",
+    "num__transit_hours",
+    "num__speed_kmh",
+    "num__quantity_sent",
+    "num__quantity_received",
+    "num__quantity_delta",
+    "num__quantity_ratio",
+    "num__temperature_c",
+    "num__temp_deviation",
+    "num__hour",
+    "num__weekday",
+    "num__is_night",
+    "num__route_step",
+    "num__route_length",
+    "num__batch_age_hours",
+    "num__cumulative_distance_km",
+    "num__scans_24h",
+    "num__scan_distance_km",
+    "num__same_serial_cities_24h",
+    "num__license_status_code",
+    "num__license_age_days",
+    "num__detour_ratio",
+    "num__scan_velocity",
+    "num__cold_chain",
+    "cat__event_type_receive",
+    "cat__event_type_scan",
+    "cat__event_type_ship",
+    "cat__product_category_analgesic",
+    "cat__product_category_antibiotic",
+    "cat__product_category_insulin",
+    "cat__product_category_oncology",
+    "cat__product_category_vaccine"
+  ],
+  "total_seconds": 23.134940972999175
+}

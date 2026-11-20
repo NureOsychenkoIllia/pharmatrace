@@ -1,0 +1,32 @@
+@startuml
+skinparam defaultFontName "DejaVu Sans"
+participant "Пацієнт" as Patient
+participant "Вебінтерфейс" as UI
+participant "FastAPI" as API
+participant "Сховище" as Store
+participant "BatchToken" as Batch
+participant "Оракул" as Oracle
+participant "Модель" as Model
+participant "IncidentRegistry" as Incident
+
+Patient -> UI : сканує QR (продукт + серія)
+UI -> Batch : verifySerial(productId, serial)
+Batch --> UI : tokenId
+UI -> Batch : getBatch(tokenId)
+Batch --> UI : стан, розпорядник, хеш
+UI -> API : GET /api/integrity/{tokenId}
+API -> Batch : getBatch(tokenId)
+API -> Store : SHA-256 документа
+Store --> API : хеш
+API --> UI : match = true
+
+Note over Oracle : подія сканування в іншому місті
+Oracle -> Model : ознаки (відстань, швидкість, скани)
+Model --> Oracle : score = 0.9999
+Oracle -> Batch : recordAnomaly(token, 9999, version, dataHash, 2)
+Oracle -> Incident : reportOracleIncident(...)
+Incident --> Oracle : incidentId
+UI -> API : GET /api/audit
+API -> Batch : журнал AnomalyRecorded
+API --> UI : рішення моделі
+@enduml

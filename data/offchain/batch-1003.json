@@ -1,0 +1,13 @@
+{
+  "batch": 1003,
+  "product": "Azithromycin 250 mg, 6 tablets",
+  "gtin": "04812345678925",
+  "serial": 1003,
+  "manufacturer_license": "UA-MFG-0042",
+  "origin_city": "KY",
+  "manufactured_at": "2026-10-03T11:15:00Z",
+  "expiry": "2028-10-03",
+  "quantity": 800,
+  "storage": "15-25 C, dry",
+  "document": "batch release protocol"
+}

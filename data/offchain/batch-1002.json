@@ -1,0 +1,13 @@
+{
+  "batch": 1002,
+  "product": "Insulin glargine 100 U/mL",
+  "gtin": "04812345678918",
+  "serial": 1002,
+  "manufacturer_license": "UA-MFG-0042",
+  "origin_city": "KY",
+  "manufactured_at": "2026-10-02T09:30:00Z",
+  "expiry": "2027-04-02",
+  "quantity": 500,
+  "storage": "2-8 C, cold chain",
+  "document": "batch release protocol"
+}
